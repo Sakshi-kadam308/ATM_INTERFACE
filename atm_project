@@ -1,115 +1,58 @@
-class ATM:
-    def __init__(self, balance=1000):
-        self.balance = balance
-        self.transaction_history = {}
+user_id = input("Enter your user ID: ")
+pin = input("Enter your PIN: ")
 
-    def deposit(self, account_number, pin, amount):
-        # Dummy account number and pin for demonstration
-        dummy_account_number = "123456"
-        dummy_pin = "7890"
+# Mocking database with a dictionary
+users = {
+    "12345": "54321",
+    "98765": "56789"
+}
 
-        # Checking if the entered account number and pin are correct
-        if account_number == dummy_account_number and pin == dummy_pin:
-            self.balance += amount
-            if account_number not in self.transaction_history:
-                self.transaction_history[account_number] = []
-            self.transaction_history[account_number].append(f"Deposited ${amount}")
-            print(f"${amount} deposited successfully.")
-            print(f"Remaining balance: ${self.balance}")
-        else:
-            print("Incorrect account number or PIN.")
+balance = 0
+transaction_history = []
 
-    def withdraw(self, account_number, pin, amount):
-        # Dummy account number and pin for demonstration
-        dummy_account_number = "123456"
-        dummy_pin = "7890"
-
-        # Checking if the entered account number and pin are correct
-        if account_number == dummy_account_number and pin == dummy_pin:
-            if amount % 100 == 0:  # Check if amount is divisible by 100
-                if self.balance >= amount:
-                    self.balance -= amount
-                    if account_number not in self.transaction_history:
-                        self.transaction_history[account_number] = []
-                    self.transaction_history[account_number].append(f"Withdrew ${amount}")
-                    print(f"${amount} withdrawn successfully.")
-                    print(f"Remaining balance: ${self.balance}")
-                else:
-                    print("Insufficient funds!")
-            else:
-                print("Amount must be divisible by 100.")
-        else:
-            print("Incorrect account number or PIN.")
-
-    def transfer(self, account_number, pin, amount, recipient_account_number):
-        # Dummy account number and pin for demonstration
-        dummy_account_number = "123456"
-        dummy_pin = "7890"
-
-        # Checking if the entered account number and pin are correct
-        if account_number == dummy_account_number and pin == dummy_pin:
-            if amount % 100 == 0:  # Check if amount is divisible by 100
-                if self.balance >= amount:
-                    if account_number not in self.transaction_history:
-                        self.transaction_history[account_number] = []
-                    if recipient_account_number not in self.transaction_history:
-                        self.transaction_history[recipient_account_number] = []
-
-                    self.transaction_history[account_number].append(f"Transferred ${amount} to {recipient_account_number}")
-                    self.transaction_history[recipient_account_number].append(f"Received ${amount} from {account_number}")
-
-                    self.balance -= amount
-                    print(f"${amount} transferred successfully to {recipient_account_number}.")
-                else:
-                    print("Insufficient funds!")
-            else:
-                print("Amount must be divisible by 100.")
-        else:
-            print("Incorrect account number or PIN.")
-
-    def show_balance(self):
-        print(f"Your balance is ${self.balance}")
-
-    def show_transaction_history(self, account_number):
-        print(f"Transaction History for Account Number: {account_number}")
-        if account_number in self.transaction_history:
-            for transaction in self.transaction_history[account_number]:
-                print(f"  - {transaction}")
-        else:
-            print("No transaction history found for this account.")
-
-
-# Example usage:
-if __name__ == "__main__":
-    initial_balance = 1000
-    atm = ATM(initial_balance)
-
+if user_id in users and users[user_id] == pin:
     while True:
-        print("\n1. Withdraw\n2. Deposit\n3. Transfer\n4. Transaction History\n5. Exit")
+        print("\nATM Menu:")
+        print("1. Transactions History")
+        print("2. Withdraw")
+        print("3. Deposit")
+        print("4. Transfer")
+        print("5. Quit")
+
         choice = input("Enter your choice: ")
 
         if choice == "1":
-            account_number = input("Enter your account number: ")
-            pin = input("Enter your PIN: ")
-            amount = float(input("Enter withdrawal amount: "))
-            atm.withdraw(account_number, pin, amount)
+            for transaction in transaction_history:
+                print(transaction)
         elif choice == "2":
-            account_number = input("Enter your account number: ")
-            pin = input("Enter your PIN: ")
-            amount = float(input("Enter deposit amount: "))
-            atm.deposit(account_number, pin, amount)
+            amount = float(input("Enter amount to withdraw: "))
+            if balance >= amount:
+                balance -= amount
+                transaction_history.append(f"Withdrew ${amount}")
+            else:
+                print("Insufficient funds")
         elif choice == "3":
-            account_number = input("Enter your account number: ")
-            pin = input("Enter your PIN: ")
-            amount = float(input("Enter transfer amount: "))
-            recipient = input("Enter recipient's account number: ")
-            atm.transfer(account_number, pin, amount, recipient)
+            amount = float(input("Enter amount to deposit: "))
+            balance += amount
+            transaction_history.append(f"Deposited ${amount}")
+            print("Amount deposited successfully..")
         elif choice == "4":
-            account_number = input("Enter your account number: ")
-            pin = input("Enter your PIN: ")
-            atm.show_transaction_history(account_number)
+            recipient_id = input("Enter recipient's user ID: ")
+            amount = float(input("Enter amount to transfer: "))
+            if recipient_id in users:
+                recipient_balance = 0  # Mocking recipient account
+                if balance >= amount:
+                    balance -= amount
+                    recipient_balance += amount
+                    transaction_history.append(f"Transferred ${amount} to {recipient_id}")
+                else:
+                    print("Insufficient funds")
+            else:
+                print("Recipient's user ID not found")
         elif choice == "5":
-            print("Exiting...")
+            print("Thank you for using our ATM. Goodbye!")
             break
         else:
-            print("Invalid choice. Please enter a valid option.")
+            print("Invalid choice. Please try again.")
+else:
+    print("Invalid user ID or PIN. Please try again.")
